@@ -4,7 +4,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import java.util.regex.Pattern
 
-
 /**
  * An Email format validator for {@link android.widget.EditText}.
  */
@@ -41,8 +40,6 @@ class EmailValidator: TextWatcher {
         return mIsValid
     }
 
-
-
     override fun afterTextChanged(editableText: Editable?) {
         mIsValid = isValidEmail(editableText)
     }
@@ -52,7 +49,7 @@ class EmailValidator: TextWatcher {
         start: Int,
         count: Int,
         after: Int
-    ) { /*No-op*/
+    ) {
     }
 
     override fun onTextChanged(
@@ -60,7 +57,7 @@ class EmailValidator: TextWatcher {
         start: Int,
         before: Int,
         count: Int
-    ) { /*No-op*/
+    ) {
     }
 
 }

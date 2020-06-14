@@ -12,83 +12,82 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        // Logger for this class.
+        // برای استفاده در لاگ ها
         private const val TAG = "MainActivity"
     }
 
-    // The helper that manages writing to SharedPreferences.
+    // برای مدیریت ذخیره کردن متن ها
     private lateinit var mSharedPreferencesHelper: SharedPreferencesHelper
 
-    // The validator for the email input field.
+    // برای بررسی درست بودن آدرس ایمیل
     private lateinit var mEmailValidator: EmailValidator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Setup field validators.
+        // مقداردهی
         mEmailValidator = EmailValidator()
-        emailInput.addTextChangedListener(mEmailValidator)
+        editTextEmail.addTextChangedListener(mEmailValidator)
 
-        // Instantiate a SharedPreferencesHelper.
+        // مقداردهی
         val sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)
-
         mSharedPreferencesHelper = SharedPreferencesHelper(sharedPreferences)
 
-        // Fill input fields from data retrieved from the SharedPreferences.
+        // اگر مقداری قبلا ذخیره شده بود نمایش میدهد
         populateUi();
     }
 
     private fun populateUi() {
         val sharedPreferenceEntry: SharedPreferenceEntry = mSharedPreferencesHelper.getPersonalInfo()
 
-        userNameInput.setText(sharedPreferenceEntry.name)
+        editTextName.setText(sharedPreferenceEntry.name)
         val dateOfBirth: Calendar = sharedPreferenceEntry.dateOfBirth
-        dateOfBirthInput.init(
-            dateOfBirth.get(Calendar.YEAR), dateOfBirth.get(Calendar.MONTH),
-            dateOfBirth.get(Calendar.DAY_OF_MONTH), null
+        datePickerBirthday.init(
+                dateOfBirth.get(Calendar.YEAR), dateOfBirth.get(Calendar.MONTH),
+                dateOfBirth.get(Calendar.DAY_OF_MONTH), null
         )
-        emailInput.setText(sharedPreferenceEntry.email)
+        editTextEmail.setText(sharedPreferenceEntry.email)
     }
 
     /**
-     * Called when the "Save" button is clicked.
+     * وقتی روی دکمه ذخیره کلیک شود این متد صدا زده میشود
      */
     fun onSaveClick(view: View) {
         // Don't save if the fields do not validate.
         if (!mEmailValidator.isValid()) {
-            emailInput.error = "Invalid email"
-            Log.w(Companion.TAG, "Not saving personal information: Invalid email")
+            editTextEmail.error = "Invalid email"
+            Log.w(TAG, "Not saving personal information: Invalid email")
             return
         }
 
-        // Get the text from the input fields.
-        val name = userNameInput.text.toString()
+        // نوشته هارا از ورودی ها بگیر
+        val name = editTextName.text.toString()
         val dateOfBirth = Calendar.getInstance()
-        dateOfBirth[dateOfBirthInput.year, dateOfBirthInput.month] = dateOfBirthInput.dayOfMonth
-        val email = emailInput.text.toString()
+        dateOfBirth[datePickerBirthday.year, datePickerBirthday.month] = datePickerBirthday.dayOfMonth
+        val email = editTextEmail.text.toString()
 
-        // Create a Setting model class to persist.
+        // مدل ذخیره سازی بساز
         val sharedPreferenceEntry =
-            SharedPreferenceEntry(name, dateOfBirth, email)
+                SharedPreferenceEntry(name, dateOfBirth, email)
 
-        // Persist the personal information.
+        // ذخیره کن و چک کن که ذخیره شده
         val isSuccess: Boolean =
-            mSharedPreferencesHelper.savePersonalInfo(sharedPreferenceEntry)
+                mSharedPreferencesHelper.savePersonalInfo(sharedPreferenceEntry)
         if (isSuccess) {
             Toast.makeText(this, "Personal information saved", Toast.LENGTH_LONG).show()
-            Log.i(Companion.TAG, "Personal information saved")
+            Log.i(TAG, "Personal information saved")
         } else {
-            Log.e(Companion.TAG, "Failed to write personal information to SharedPreferences")
+            Log.e(TAG, "Failed to write personal information to SharedPreferences")
         }
     }
 
     /**
-     * Called when the "Revert" button is clicked.
+     * وقتی روی دکمه پاک کردن کلیک شود این متد صدا زده میشود
      */
     fun onRevertClick(view: View) {
-        populateUi();
-        Toast.makeText(this, "Personal information reverted", Toast.LENGTH_LONG).show();
-        Log.i(Companion.TAG, "Personal information reverted");
+        populateUi()
+        Toast.makeText(this, "Personal information reverted", Toast.LENGTH_LONG).show()
+        Log.i(TAG, "Personal information reverted")
     }
 }
