@@ -8,4 +8,7 @@
     <string name="email_hint">Enter your email address</string>
     <string name="save">Save</string>
     <string name="revert">Revert</string>
+    <string name="TOAST_STRING_REVERTED">Personal information reverted</string>
+    <string name="TOAST_STRING_SAVED">Personal information saved</string>
+    <string name="EMAIL_ERROR">Invalid email</string>
 </resources>

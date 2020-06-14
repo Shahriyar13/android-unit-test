@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     fun onSaveClick(view: View) {
         // Don't save if the fields do not validate.
         if (!mEmailValidator.isValid()) {
-            editTextEmail.error = "Invalid email"
+            editTextEmail.error = getString(R.string.EMAIL_ERROR)
             Log.w(TAG, "Not saving personal information: Invalid email")
             return
         }
@@ -75,8 +75,8 @@ class MainActivity : AppCompatActivity() {
         val isSuccess: Boolean =
                 mSharedPreferencesHelper.savePersonalInfo(sharedPreferenceEntry)
         if (isSuccess) {
-            Toast.makeText(this, "Personal information saved", Toast.LENGTH_LONG).show()
-            Log.i(TAG, "Personal information saved")
+            Toast.makeText(this, getString(R.string.TOAST_STRING_SAVED), Toast.LENGTH_LONG).show()
+            Log.i(TAG, getString(R.string.TOAST_STRING_SAVED))
         } else {
             Log.e(TAG, "Failed to write personal information to SharedPreferences")
         }
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
      */
     fun onRevertClick(view: View) {
         populateUi()
-        Toast.makeText(this, "Personal information reverted", Toast.LENGTH_LONG).show()
-        Log.i(TAG, "Personal information reverted")
+        Toast.makeText(this, getString(R.string.TOAST_STRING_REVERTED), Toast.LENGTH_LONG).show()
+        Log.i(TAG, getString(R.string.TOAST_STRING_REVERTED))
     }
 }
