@@ -1,5 +1,7 @@
 package com.example.ayusch
 
+import android.app.Activity
+import android.content.Context
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.*
@@ -27,15 +29,9 @@ import org.hamcrest.Matchers.not
  */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
-    @Test
-    fun useAppContext() {
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.example.ayusch", appContext.packageName)
-    }
 
-    @get:Rule
-    var activityRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
-
+    private lateinit var appContext: Context
+    private lateinit var activity: Activity
     private lateinit var editTextName: ViewInteraction
     private lateinit var editTextEmail: ViewInteraction
     private lateinit var buttonSave: ViewInteraction
@@ -44,8 +40,13 @@ class ExampleInstrumentedTest {
     private lateinit var validEmail: String
     private lateinit var inValidEmail: String
 
+    @get:Rule
+    var activityRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
+
     @Before
     fun initValidString() {
+        appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        activity = activityRule.activity
         validName = "Shahriyar Aghajani"
         validEmail = "Shahriyar@Aghajani.com"
         inValidEmail = "Shahriyar@Aghajani"
@@ -53,6 +54,12 @@ class ExampleInstrumentedTest {
         editTextEmail = onView(withId(R.id.editTextEmail))
         buttonSave = onView(withId(R.id.buttonSave))
         datePickerBirthday = onView(withId(R.id.datePickerBirthday))
+    }
+
+    @Test
+    fun useAppContext() {
+        // Context of the app under test.
+        assertEquals("com.example.ayusch", appContext.packageName)
     }
 
     @Test
@@ -69,7 +76,7 @@ class ExampleInstrumentedTest {
         editTextEmail.perform(typeText(validEmail), closeSoftKeyboard())
         buttonSave.perform(click())
 
-        editTextName.check(matches(hasErrorText(activityRule.activity.getString(R.string.NAME_ERROR))))
+        editTextName.check(matches(hasErrorText(appContext.getString(R.string.NAME_ERROR))))
     }
 
     @Test
@@ -81,8 +88,8 @@ class ExampleInstrumentedTest {
         editTextEmail.perform(typeText(validEmail), closeSoftKeyboard())
         buttonSave.perform(click())
 
-        onView(withText(activityRule.activity.getString(R.string.BIRTHDAY_ERROR)))
-            .inRoot(withDecorView(not(`is`(activityRule.activity.window.decorView))))
+        onView(withText(appContext.getString(R.string.BIRTHDAY_ERROR)))
+            .inRoot(withDecorView(not(`is`(activity.window.decorView))))
             .check(matches(isDisplayed()))
     }
 
@@ -95,7 +102,7 @@ class ExampleInstrumentedTest {
         editTextEmail.perform(typeText(inValidEmail), closeSoftKeyboard())
         buttonSave.perform(click())
 
-        editTextEmail.check(matches(hasErrorText(activityRule.activity.getString(R.string.EMAIL_ERROR))))
+        editTextEmail.check(matches(hasErrorText(appContext.getString(R.string.EMAIL_ERROR))))
     }
 
     @Test
@@ -107,8 +114,8 @@ class ExampleInstrumentedTest {
         editTextEmail.perform(typeText(validEmail), closeSoftKeyboard())
         buttonSave.perform(click())
 
-        onView(withText(activityRule.activity.getString(R.string.TOAST_STRING_SAVED)))
-            .inRoot(withDecorView(not(`is`(activityRule.activity.window.decorView))))
+        onView(withText(appContext.getString(R.string.TOAST_STRING_SAVED)))
+            .inRoot(withDecorView(not(`is`(activity.window.decorView))))
             .check(matches(isDisplayed()))
     }
 }
