@@ -4,21 +4,17 @@ import android.content.SharedPreferences
 import java.util.*
 
 /**
- *  Helper class to manage access to {@link SharedPreferences}.
- */
-
-/**
- * Constructor with dependency injection.
+ * Helper class to manage access to {@link SharedPreferences}.
  *
+ * Constructor with dependency injection.
  * @param sharedPreferences The [SharedPreferences] that will be used in this DAO.
  */
 class SharedPreferencesHelper(private val sharedPreferences: SharedPreferences) {
 
-    companion object {
-        // Keys for saving values in SharedPreferences.
-        const val KEY_NAME = "key_name"
-        const val KEY_DOB = "key_dob_millis"
-        const val KEY_EMAIL = "key_email"
+    enum class Key(val value: String) {
+        KEY_NAME("key_name"),
+        KEY_DOB("key_dob_millis"),
+        KEY_EMAIL("key_email")
     }
 
     /**
@@ -29,11 +25,12 @@ class SharedPreferencesHelper(private val sharedPreferences: SharedPreferences) 
      * @return `true` if writing to [SharedPreferences] succeeded. `false`
      * otherwise.
      */
-    fun savePersonalInfo(sharedPreferenceEntry: SharedPreferenceEntry): Boolean { // Start a SharedPreferences transaction.
+    fun savePersonalInfo(sharedPreferenceEntry: SharedPreferenceEntry): Boolean {
+        // Start a SharedPreferences transaction.
         val editor = sharedPreferences.edit()
-        editor.putString(KEY_NAME, sharedPreferenceEntry.name)
-        editor.putLong(KEY_DOB, sharedPreferenceEntry.dateOfBirth.timeInMillis)
-        editor.putString(KEY_EMAIL, sharedPreferenceEntry.email)
+        editor.putString(Key.KEY_NAME.value, sharedPreferenceEntry.name)
+        editor.putLong(Key.KEY_DOB.value, sharedPreferenceEntry.dateOfBirth.timeInMillis)
+        editor.putString(Key.KEY_EMAIL.value, sharedPreferenceEntry.email)
         // Commit changes to SharedPreferences.
         return editor.commit()
     }
@@ -44,13 +41,14 @@ class SharedPreferencesHelper(private val sharedPreferences: SharedPreferences) 
      *
      * @return the Retrieved [SharedPreferenceEntry].
      */
-    fun getPersonalInfo(): SharedPreferenceEntry { // Get data from the SharedPreferences.
-        val name = sharedPreferences.getString(KEY_NAME, "") ?: ""
+    fun getPersonalInfo(): SharedPreferenceEntry {
+        // Get data from the SharedPreferences.
+        val name = sharedPreferences.getString(Key.KEY_NAME.value, "") ?: ""
         val dobMillis =
-            sharedPreferences.getLong(KEY_DOB, Calendar.getInstance().timeInMillis)
+            sharedPreferences.getLong(Key.KEY_DOB.value, Calendar.getInstance().timeInMillis)
         val dateOfBirth: Calendar = Calendar.getInstance()
         dateOfBirth.timeInMillis = dobMillis
-        val email = sharedPreferences.getString(KEY_EMAIL, "") ?: ""
+        val email = sharedPreferences.getString(Key.KEY_EMAIL.value, "") ?: ""
         // Create and fill a SharedPreferenceEntry model object.
         return SharedPreferenceEntry(name, dateOfBirth, email)
     }

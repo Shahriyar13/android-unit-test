@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         mSharedPreferencesHelper = SharedPreferencesHelper(sharedPreferences)
 
         // اگر مقداری قبلا ذخیره شده بود نمایش میدهد
-        populateUi();
+        populateUi()
     }
 
     private fun populateUi() {
@@ -99,12 +99,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         // مدل ذخیره سازی بساز
-        val sharedPreferenceEntry =
-                SharedPreferenceEntry(name, dateOfBirth, email)
+        val sharedPreferenceEntry = SharedPreferenceEntry(name, dateOfBirth, email)
 
         // ذخیره کن و چک کن که ذخیره شده
-        val isSuccess: Boolean =
-                mSharedPreferencesHelper.savePersonalInfo(sharedPreferenceEntry)
+        val isSuccess: Boolean = mSharedPreferencesHelper.savePersonalInfo(sharedPreferenceEntry)
         if (isSuccess) {
             Toast.makeText(this, getString(R.string.TOAST_STRING_SAVED), Toast.LENGTH_LONG).show()
             Log.i(TAG, getString(R.string.TOAST_STRING_SAVED))

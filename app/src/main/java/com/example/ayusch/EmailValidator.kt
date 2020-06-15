@@ -10,6 +10,7 @@ import java.util.regex.Pattern
 class EmailValidator: TextWatcher {
 
     companion object {
+
         /**
          * Email validation pattern.
          */
@@ -26,19 +27,16 @@ class EmailValidator: TextWatcher {
         /**
          * Validates if the given input is a valid email address.
          *
-         * @param email        The email to validate.
+         * @param email The email to validate.
          * @return `true` if the input is a valid email. `false` otherwise.
          */
-        fun isValidEmail(email: CharSequence?): Boolean {
-            return email != null && EMAIL_PATTERN.matcher(email).matches()
-        }
+        fun isValidEmail(email: CharSequence?) =
+            email != null && EMAIL_PATTERN.matcher(email).matches()
     }
 
     private var mIsValid = false
 
-    fun isValid(): Boolean {
-        return mIsValid
-    }
+    fun isValid() = mIsValid
 
     override fun afterTextChanged(editableText: Editable?) {
         mIsValid = isValidEmail(editableText)
