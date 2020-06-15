@@ -403,11 +403,12 @@ EmailValidator
 > 1. androidTest
 > 1. test
 >
+> اولی برای تست های اندروید و دومی برای تست های جاوا و کاتلین
 >
-> که ما در جای دوم ینی
+> که ما ابتدا در جای دوم ینی
 >
 > test
-> app\src\test\java\{yourPackageName}
+> app\src\test\java\{yourPackageName}\
 >
 > شروع میکنیم
 >
@@ -658,3 +659,225 @@ SharedPreferencesHelperTest
 `موفق باشید`
 
 **میتونید از گیت کلون بگیرید و پروژه رو خوش آب و رنگتر توی اندروید استدیو ببینید**
+
+
+***
+
+> حالا بریم سراغ تست های اندروید
+> 1. androidTest
+> 1. test
+>
+> یعنی اولی
+>
+> androidTest
+> app\src\androidTest\java\{yourPackageName}\
+>
+> شروع میکنیم
+>
+> برای تست اتفاقات صفحه اصلی
+>
+>
+> ابتدا روی گوشی که قراره تست ها روش انجام بشه یه کاری انجام بدید
+>
+> به قسمت توسعه دهنده ها توی تنظیمات برید و تمام زمان نمایش انیمیشن ها رو صفر کنید
+
+یک کلاس برای تست صفحه اصلی میسازیم
+
+MainActivityTest 
+
+    
+    import android.app.Activity
+    import android.content.Context
+    import androidx.test.espresso.Espresso.onView
+    import androidx.test.espresso.ViewInteraction
+    import androidx.test.espresso.action.ViewActions.*
+    import androidx.test.espresso.assertion.ViewAssertions.matches
+    import androidx.test.espresso.contrib.PickerActions
+    import androidx.test.espresso.matcher.RootMatchers.withDecorView
+    import androidx.test.espresso.matcher.ViewMatchers.*
+    import androidx.test.ext.junit.runners.AndroidJUnit4
+    import androidx.test.platform.app.InstrumentationRegistry
+    import androidx.test.rule.ActivityTestRule
+    import org.junit.Before
+    import org.junit.Rule
+    import org.junit.Test
+    import org.junit.runner.RunWith
+    import org.hamcrest.Matchers.`is`
+    import org.hamcrest.Matchers.not
+    
+    /**
+     * Instrumented test, which will execute on an Android device.
+     *
+     * See [testing documentation](http://d.android.com/tools/testing).
+     */
+    @RunWith(AndroidJUnit4::class)
+    class MainActivityTest {
+    
+        private lateinit var appContext: Context
+        private lateinit var activity: Activity
+        private lateinit var editTextName: ViewInteraction
+        private lateinit var editTextEmail: ViewInteraction
+        private lateinit var buttonSave: ViewInteraction
+        private lateinit var datePickerBirthday: ViewInteraction
+        private lateinit var validName: String
+        private lateinit var validEmail: String
+        private lateinit var inValidEmail: String
+    
+        @get:Rule
+        var activityRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
+    
+        @Before
+        fun initValidString() {
+            appContext = InstrumentationRegistry.getInstrumentation().targetContext
+            activity = activityRule.activity
+            validName = "Shahriyar Aghajani"
+            validEmail = "Shahriyar@Aghajani.com"
+            inValidEmail = "Shahriyar@Aghajani"
+            editTextName = onView(withId(R.id.editTextName))
+            editTextEmail = onView(withId(R.id.editTextEmail))
+            buttonSave = onView(withId(R.id.buttonSave))
+            datePickerBirthday = onView(withId(R.id.datePickerBirthday))
+        }
+    
+        @Test
+        fun saveUserInfo_availableSaveButton() {
+            buttonSave.check(matches(isDisplayed()))
+            buttonSave.check(matches(withText("Save")))
+        }
+    
+        @Test
+        fun saveUserInfo_nameError() {
+            editTextName.perform(clearText())
+            datePickerBirthday.perform(PickerActions.setDate(1993, 5, 2))
+            editTextEmail.perform(clearText())
+            editTextEmail.perform(typeText(validEmail), closeSoftKeyboard())
+            buttonSave.perform(click())
+    
+            editTextName.check(matches(hasErrorText(appContext.getString(R.string.NAME_ERROR))))
+        }
+    
+        @Test
+        fun saveUserInfo_dateError() {
+            editTextName.perform(clearText())
+            editTextName.perform(typeText(validName), closeSoftKeyboard())
+            datePickerBirthday.perform(PickerActions.setDate(2900, 7, 16))
+            editTextEmail.perform(clearText())
+            editTextEmail.perform(typeText(validEmail), closeSoftKeyboard())
+            buttonSave.perform(click())
+    
+            onView(withText(appContext.getString(R.string.BIRTHDAY_ERROR)))
+                .inRoot(withDecorView(not(`is`(activity.window.decorView))))
+                .check(matches(isDisplayed()))
+        }
+    
+        @Test
+        fun saveUserInfo_emailError() {
+            editTextName.perform(clearText())
+            editTextName.perform(typeText(validName), closeSoftKeyboard())
+            datePickerBirthday.perform(PickerActions.setDate(1993, 5, 2))
+            editTextEmail.perform(clearText())
+            editTextEmail.perform(typeText(inValidEmail), closeSoftKeyboard())
+            buttonSave.perform(click())
+    
+            editTextEmail.check(matches(hasErrorText(appContext.getString(R.string.EMAIL_ERROR))))
+        }
+    
+        @Test
+        fun saveUserInfo_success() {
+            editTextName.perform(clearText())
+            editTextName.perform(typeText(validName), closeSoftKeyboard())
+            datePickerBirthday.perform(PickerActions.setDate(1993, 5, 2))
+            editTextEmail.perform(clearText())
+            editTextEmail.perform(typeText(validEmail), closeSoftKeyboard())
+            buttonSave.perform(click())
+    
+            onView(withText(appContext.getString(R.string.TOAST_STRING_SAVED)))
+                .inRoot(withDecorView(not(`is`(activity.window.decorView))))
+                .check(matches(isDisplayed()))
+        }
+    }
+
+
+> در ابتدا به کلاس انوتیشین زیر را میدهیم
+>
+> @RunWith(AndroidJUnit4::class)
+>
+> بعد این رو توی کلاس اضافه کردیم که بدونه کدوم اکتیویتی داره تست میشه
+>
+
+
+    @get:Rule
+        var activityRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
+
+>
+> حالا ویو های صفحه اصلی را ‍یدا میکنیم و مقدار میدیم
+
+        @Before
+        fun initValidString() {
+            appContext = InstrumentationRegistry.getInstrumentation().targetContext
+            activity = activityRule.activity
+            validName = "Shahriyar Aghajani"
+            validEmail = "Shahriyar@Aghajani.com"
+            inValidEmail = "Shahriyar@Aghajani"
+            editTextName = onView(withId(R.id.editTextName))
+            editTextEmail = onView(withId(R.id.editTextEmail))
+            buttonSave = onView(withId(R.id.buttonSave))
+            datePickerBirthday = onView(withId(R.id.datePickerBirthday))
+        }
+
+
+>
+>
+
+
+    buttonSave.check(matches(isDisplayed()))
+    buttonSave.check(matches(withText("Save")))
+
+
+
+> اینجا از چند دستور ساده استفاده شده
+>
+* check
+> میاد چیزی که بهش میگیمو توی اون ویو امتحان میکنه که درسته یا نه
+* matches
+> از اسمش واضحه که مثل مساوی میمونه
+* isDisplayed
+> آیا ویزیبل هست
+* withText
+> آیا متنش اینه: --- ؟
+
+
+    editTextName.perform(clearText())
+
+
+* perform
+>  یک کاری رو روی اون ویو اعمال میکنه
+* clearText()
+> مانند دستور زیر عمل میکنه
+>
+> editTextName.setText("")
+
+
+    editTextName.perform(typeText(validName), closeSoftKeyboard())
+
+
+* typeText
+> مقدار آرگومانی که بهش میدیمو داخل ادیت تکست تایپ میکنه
+* closeSoftKeyboard()
+> صفحه کلید رو میبنده بعد تایپ کردن
+
+
+* click()
+> کلیک میکنه
+
+    onView(withText(appContext.getString(R.string.TOAST_STRING_SAVED)))
+                .inRoot(withDecorView(not(`is`(activity.window.decorView))))
+                .check(matches(isDisplayed()))
+
+متن توست نمایش داده شده رو بررسی میکنه
+
+
+    editTextEmail.check(matches(hasErrorText(appContext.getString(R.string.EMAIL_ERROR))))
+
+
+متن ارور نشان داده شده روی این ویو رو بررسی میکنه
