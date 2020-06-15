@@ -294,7 +294,8 @@ SharedPreferencesHelper
          * @return `true` if writing to [SharedPreferences] succeeded. `false`
          * otherwise.
          */
-        fun savePersonalInfo(sharedPreferenceEntry: SharedPreferenceEntry): Boolean { // Start a SharedPreferences transaction.
+        fun savePersonalInfo(sharedPreferenceEntry: SharedPreferenceEntry): Boolean {
+            // Start a SharedPreferences transaction.
             val editor = sharedPreferences.edit()
             editor.putString(KEY_NAME, sharedPreferenceEntry.name)
             editor.putLong(KEY_DOB, sharedPreferenceEntry.dateOfBirth.timeInMillis)
@@ -309,7 +310,8 @@ SharedPreferencesHelper
          *
          * @return the Retrieved [SharedPreferenceEntry].
          */
-        fun getPersonalInfo(): SharedPreferenceEntry { // Get data from the SharedPreferences.
+        fun getPersonalInfo(): SharedPreferenceEntry {
+            // Get data from the SharedPreferences.
             val name = sharedPreferences.getString(KEY_NAME, "") ?: ""
             val dobMillis =
                 sharedPreferences.getLong(KEY_DOB, Calendar.getInstance().timeInMillis)
