@@ -29,12 +29,9 @@ import org.hamcrest.Matchers.not
 class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {
-        // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.example.ayusch", appContext.packageName)
     }
-
-    private lateinit var stringToBeTyped: String
 
     @get:Rule
     var activityRule: ActivityTestRule<MainActivity> = ActivityTestRule(MainActivity::class.java)
@@ -43,11 +40,15 @@ class ExampleInstrumentedTest {
     private lateinit var editTextEmail: ViewInteraction
     private lateinit var buttonSave: ViewInteraction
     private lateinit var datePickerBirthday: ViewInteraction
+    private lateinit var validName: String
+    private lateinit var validEmail: String
+    private lateinit var inValidEmail: String
 
     @Before
     fun initValidString() {
-        // Specify a valid string.
-        stringToBeTyped = "Save"
+        validName = "Shahriyar Aghajani"
+        validEmail = "Shahriyar@Aghajani.com"
+        inValidEmail = "Shahriyar@Aghajani"
         editTextName = onView(withId(R.id.editTextName))
         editTextEmail = onView(withId(R.id.editTextEmail))
         buttonSave = onView(withId(R.id.buttonSave))
@@ -55,47 +56,30 @@ class ExampleInstrumentedTest {
     }
 
     @Test
-    fun saveUserInfo_success() {
-        // Type text and then press the button.
-        editTextName.perform(clearText())
-        editTextName.perform(typeText("Shahriyar"), closeSoftKeyboard())
-        datePickerBirthday.perform(PickerActions.setDate(1993,5,2))
-        editTextEmail.perform(clearText())
-        editTextEmail.perform(typeText("shahriyar@aghajani.com"), closeSoftKeyboard())
-        buttonSave.perform(click())
+    fun saveUserInfo_availableSaveButton() {
         buttonSave.check(matches(isDisplayed()))
-        buttonSave.check(matches(withText(stringToBeTyped)))
-
-        onView(withText(activityRule.activity.getString(R.string.TOAST_STRING_SAVED)))
-            .inRoot(withDecorView(not(`is`(activityRule.activity.window.decorView))))
-            .check(matches(isDisplayed()))
+        buttonSave.check(matches(withText("Save")))
     }
 
     @Test
     fun saveUserInfo_nameError() {
-        // Type text and then press the button.
         editTextName.perform(clearText())
         datePickerBirthday.perform(PickerActions.setDate(1993,5,2))
         editTextEmail.perform(clearText())
-        editTextEmail.perform(typeText("shahriyar@aghajani.com"), closeSoftKeyboard())
+        editTextEmail.perform(typeText(validEmail), closeSoftKeyboard())
         buttonSave.perform(click())
-        buttonSave.check(matches(isDisplayed()))
-        buttonSave.check(matches(withText(stringToBeTyped)))
 
         editTextName.check(matches(hasErrorText(activityRule.activity.getString(R.string.NAME_ERROR))))
     }
 
     @Test
     fun saveUserInfo_dateError() {
-        // Type text and then press the button.
         editTextName.perform(clearText())
-        editTextName.perform(typeText("Shahriyar"), closeSoftKeyboard())
+        editTextName.perform(typeText(validName), closeSoftKeyboard())
         datePickerBirthday.perform(PickerActions.setDate(2900,7,16))
         editTextEmail.perform(clearText())
-        editTextEmail.perform(typeText("shahriyar@aghajani.com"), closeSoftKeyboard())
+        editTextEmail.perform(typeText(validEmail), closeSoftKeyboard())
         buttonSave.perform(click())
-        buttonSave.check(matches(isDisplayed()))
-        buttonSave.check(matches(withText(stringToBeTyped)))
 
         onView(withText(activityRule.activity.getString(R.string.BIRTHDAY_ERROR)))
             .inRoot(withDecorView(not(`is`(activityRule.activity.window.decorView))))
@@ -104,16 +88,27 @@ class ExampleInstrumentedTest {
 
     @Test
     fun saveUserInfo_emailError() {
-        // Type text and then press the button.
         editTextName.perform(clearText())
-        editTextName.perform(typeText("Shahriyar"), closeSoftKeyboard())
+        editTextName.perform(typeText(validName), closeSoftKeyboard())
         datePickerBirthday.perform(PickerActions.setDate(1993,5,2))
         editTextEmail.perform(clearText())
-        editTextEmail.perform(typeText("shahriyar@aghajani"), closeSoftKeyboard())
+        editTextEmail.perform(typeText(inValidEmail), closeSoftKeyboard())
         buttonSave.perform(click())
-        buttonSave.check(matches(isDisplayed()))
-        buttonSave.check(matches(withText(stringToBeTyped)))
 
         editTextEmail.check(matches(hasErrorText(activityRule.activity.getString(R.string.EMAIL_ERROR))))
+    }
+
+    @Test
+    fun saveUserInfo_success() {
+        editTextName.perform(clearText())
+        editTextName.perform(typeText(validName), closeSoftKeyboard())
+        datePickerBirthday.perform(PickerActions.setDate(1993,5,2))
+        editTextEmail.perform(clearText())
+        editTextEmail.perform(typeText(validEmail), closeSoftKeyboard())
+        buttonSave.perform(click())
+
+        onView(withText(activityRule.activity.getString(R.string.TOAST_STRING_SAVED)))
+            .inRoot(withDecorView(not(`is`(activityRule.activity.window.decorView))))
+            .check(matches(isDisplayed()))
     }
 }
