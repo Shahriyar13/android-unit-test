@@ -11,4 +11,6 @@
     <string name="TOAST_STRING_REVERTED">Personal information reverted</string>
     <string name="TOAST_STRING_SAVED">Personal information saved</string>
     <string name="EMAIL_ERROR">Invalid email</string>
+    <string name="BIRTHDAY_ERROR">Invalid Birthday</string>
+    <string name="NAME_ERROR">Invalide name</string>
 </resources>

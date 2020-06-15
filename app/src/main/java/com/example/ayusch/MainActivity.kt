@@ -54,18 +54,49 @@ class MainActivity : AppCompatActivity() {
      * وقتی روی دکمه ذخیره کلیک شود این متد صدا زده میشود
      */
     fun onSaveClick(view: View) {
-        // Don't save if the fields do not validate.
-        if (!mEmailValidator.isValid()) {
-            editTextEmail.error = getString(R.string.EMAIL_ERROR)
-            Log.w(TAG, "Not saving personal information: Invalid email")
-            return
-        }
 
         // نوشته هارا از ورودی ها بگیر
         val name = editTextName.text.toString()
         val dateOfBirth = Calendar.getInstance()
         dateOfBirth[datePickerBirthday.year, datePickerBirthday.month] = datePickerBirthday.dayOfMonth
         val email = editTextEmail.text.toString()
+
+        // اگر مقدار نام اشتباه بودن ارور نشون بده
+        if (name.isEmpty()) {
+            editTextName.error = getString(R.string.NAME_ERROR)
+            Log.w(TAG, "Not saving personal information: Invalid name")
+            return
+        }
+
+        // اگر مقدار تاریخ تولد بزرگتر از تاریخ الان بود ارور نشون بده
+        val calendarNow = Calendar.getInstance()
+        if (datePickerBirthday.year >= calendarNow.get(Calendar.YEAR)) {
+            //اگه سال بزرگتر از امسال بود
+            if (datePickerBirthday.year > calendarNow.get(Calendar.YEAR)) {
+                Toast.makeText(this, getString(R.string.BIRTHDAY_ERROR), Toast.LENGTH_LONG).show()
+                Log.w(TAG, "Not saving personal information: Invalid birthday year")
+                return
+                //اگه سال یکی بود ولی ماه بزرگتر بود
+            } else if (datePickerBirthday.month >= calendarNow.get(Calendar.MONTH)) {
+                if (datePickerBirthday.month > calendarNow.get(Calendar.MONTH)) {
+                    Toast.makeText(this, getString(R.string.BIRTHDAY_ERROR), Toast.LENGTH_LONG).show()
+                    Log.w(TAG, "Not saving personal information: Invalid birthday month")
+                    return
+                    //اگه سال و ماه یکی بود ولی روز بزرگتر بود
+                } else if (datePickerBirthday.dayOfMonth > calendarNow.get(Calendar.DAY_OF_MONTH)) {
+                    Toast.makeText(this, getString(R.string.BIRTHDAY_ERROR), Toast.LENGTH_LONG).show()
+                    Log.w(TAG, "Not saving personal information: Invalid birthday day")
+                    return
+                }
+            }
+        }
+
+        // اگر مقدار ایمیل اشتباه بودن ارور نشون بده
+        if (!mEmailValidator.isValid()) {
+            editTextEmail.error = getString(R.string.EMAIL_ERROR)
+            Log.w(TAG, "Not saving personal information: Invalid email")
+            return
+        }
 
         // مدل ذخیره سازی بساز
         val sharedPreferenceEntry =
